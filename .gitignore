@@ -1,0 +1,16 @@
+# Python files
+.venv
+.mypy_cache
+__pycache__
+*.py[cod]
+
+# Quarto files
+/.quarto/
+*_files
+*.html
+
+# Jupyter
+.ipynb_checkpoints
+
+# Keep d3nx visulizer
+!d3networkx/**/visualizer.html
