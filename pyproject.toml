@@ -13,8 +13,11 @@ pandas = "^1.5.3"
 ipywidgets = "7.6.0"
 pyfunctional = "^1.4.3"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 networkx-stubs = "^0.0.1"
+pandas-stubs = "^1.5.3"
+black = "^23.3.0"
+mypy = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
