@@ -86,11 +86,26 @@ r1 = routes.route_id[0]
 r1_trips = trips[trips.route_id == r1]
 # for trip_id in r1_trips["trip_id"].drop_duplicates():
 for trip_id in trips["trip_id"].drop_duplicates():
-    trip_stop_times = stop_times[stop_times.trip_id == trip_id]
-    for (idx1, s1), (idx2, s2) in more_itertools.pairwise(trip_stop_times.iterrows()):
-        trip_time = str(s2.arrival_time - s1.arrival_time)
-        G.add_edge(s1.stop_id, s2.stop_id, weight=trip_time)
+    trip_stop_times = (
+        stop_times[stop_times.trip_id == trip_id]
+        .set_index("stop_sequence")
+        .sort_index()
+    )
+    for s1, s2 in more_itertools.pairwise(trip_stop_times.itertuples(index=False)):
+        trip_time = s2.arrival_time - s1.arrival_time
+        if not G.has_edge(s1.stop_id, s2.stop_id):
+            G.add_edge(s1.stop_id, s2.stop_id, trip_times=[trip_time])
+        else:
+            G[s1.stop_id][s2.stop_id]["trip_times"].append(trip_time)
     # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
+
+# %% Average trip times for each node
+avg_trip_times = {
+    trip: sum(times, timedelta(0)) / len(times)
+    for trip, times in nx.get_edge_attributes(G, "trip_times").items()
+}
+
+nx.set_edge_attributes(G, avg_trip_times, "weight")
 
 # %% Convert the trip into a DiGraph
 nx.draw(G, stop_pos, node_size=5, width=0.5)
