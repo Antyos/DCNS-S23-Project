@@ -2,6 +2,7 @@
 import itertools
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Iterable
 
 import more_itertools
 import networkx as nx
@@ -27,8 +28,12 @@ def time_string_to_timedelta(time_string):
     return timedelta(hours=hours, minutes=minutes, seconds=seconds)
 
 
-stop_times.arrival_time = stop_times.arrival_time.apply(time_string_to_timedelta)
-stop_times.departure_time = stop_times.departure_time.apply(time_string_to_timedelta)
+stop_times["arrival_time_sec"] = stop_times.arrival_time.apply(
+    time_string_to_timedelta
+).dt.total_seconds()
+stop_times["departure_time_sec"] = stop_times.departure_time.apply(
+    time_string_to_timedelta
+).dt.total_seconds()
 
 # %% Get the columns from each file for comparison
 cols = pd.DataFrame(data={name: pd.Series(d[name].columns.str.lower()) for name in d})
@@ -92,7 +97,7 @@ for trip_id in trips["trip_id"].drop_duplicates():
         .sort_index()
     )
     for s1, s2 in more_itertools.pairwise(trip_stop_times.itertuples(index=False)):
-        trip_time = s2.arrival_time - s1.arrival_time
+        trip_time = s2.arrival_time_sec - s1.arrival_time_sec
         if not G.has_edge(s1.stop_id, s2.stop_id):
             G.add_edge(s1.stop_id, s2.stop_id, trip_times=[trip_time])
         else:
@@ -101,11 +106,21 @@ for trip_id in trips["trip_id"].drop_duplicates():
 
 # %% Average trip times for each node
 avg_trip_times = {
-    trip: sum(times, timedelta(0)) / len(times)
+    trip: sum(times) / len(times)
     for trip, times in nx.get_edge_attributes(G, "trip_times").items()
 }
 
 nx.set_edge_attributes(G, avg_trip_times, "weight")
+
+
+# %% Remove list of trip times
+def remove_edge_attrs(G, attrs: Iterable[str]):
+    for n1, n2, d in G.edges(data=True):
+        for att in attrs:
+            d.pop(att, None)
+
+
+remove_edge_attrs(G, "trip_times")
 
 # %% Convert the trip into a DiGraph
 nx.draw(G, stop_pos, node_size=5, width=0.5)
@@ -113,3 +128,6 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 
 
 # %% Write the graph to .gml
+nx.write_gml(G, "dart_stops.gml")
+
+# %%
