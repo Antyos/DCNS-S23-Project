@@ -1,5 +1,6 @@
 # %%
 import itertools
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import more_itertools
@@ -18,6 +19,16 @@ stops = pd.read_csv(DATA_DIR / "stops.txt")
 
 # Read all files in DATA_DIR
 d = {f.stem: pd.read_csv(f) for f in DATA_DIR.iterdir()}
+
+
+# Convert stop times to actual times
+def time_string_to_timedelta(time_string):
+    hours, minutes, seconds = [int(x) for x in time_string.split(":")]
+    return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+
+
+stop_times.arrival_time = stop_times.arrival_time.apply(time_string_to_timedelta)
+stop_times.departure_time = stop_times.departure_time.apply(time_string_to_timedelta)
 
 # %% Get the columns from each file for comparison
 cols = pd.DataFrame(data={name: pd.Series(d[name].columns.str.lower()) for name in d})
@@ -75,8 +86,10 @@ r1 = routes.route_id[0]
 r1_trips = trips[trips.route_id == r1]
 # for trip_id in r1_trips["trip_id"].drop_duplicates():
 for trip_id in trips["trip_id"].drop_duplicates():
-    trip_stop_ids = stop_times[stop_times.trip_id == trip_id].stop_id
-    G.add_edges_from(more_itertools.pairwise(trip_stop_ids.values))
+    trip_stop_times = stop_times[stop_times.trip_id == trip_id]
+    for (idx1, s1), (idx2, s2) in more_itertools.pairwise(trip_stop_times.iterrows()):
+        trip_time = str(s2.arrival_time - s1.arrival_time)
+        G.add_edge(s1.stop_id, s2.stop_id, weight=trip_time)
     # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
 
 # %% Convert the trip into a DiGraph
@@ -84,4 +97,4 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 # G.add_nodes_from(trip1_stop_times.stop_id.values)
 
 
-# %%
+# %% Write the graph to .gml
