@@ -12,6 +12,8 @@ networkx = "^3.0"
 pandas = "^1.5.3"
 ipywidgets = "7.6.0"
 pyfunctional = "^1.4.3"
+ipykernel = "^6.22.0"
+tqdm = "^4.65.0"
 
 [tool.poetry.group.dev.dependencies]
 networkx-stubs = "^0.0.1"
