@@ -2,7 +2,7 @@
 import itertools
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Union
 
 import more_itertools
 import networkx as nx
@@ -105,22 +105,27 @@ for trip_id in trips["trip_id"].drop_duplicates():
     # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
 
 # %% Average trip times for each node
+num_trips = {
+    trip: len(times) for trip, times in nx.get_edge_attributes(G, "trip_times").items()
+}
 avg_trip_times = {
-    trip: sum(times) / len(times)
+    trip: round(sum(times) / len(times), 2)
     for trip, times in nx.get_edge_attributes(G, "trip_times").items()
 }
 
+nx.set_edge_attributes(G, num_trips, "num_trips")
 nx.set_edge_attributes(G, avg_trip_times, "weight")
 
 
 # %% Remove list of trip times
-def remove_edge_attrs(G, attrs: Iterable[str]):
+def remove_edge_attrs(G, attrs: Union[Iterable[str], str]):
     for n1, n2, d in G.edges(data=True):
-        for att in attrs:
-            d.pop(att, None)
+        if isinstance(attrs, str):
+            d.pop(attrs)
+        for attr in attrs:
+            d.pop(attr, None)
+    return G
 
-
-remove_edge_attrs(G, "trip_times")
 
 # %% Convert the trip into a DiGraph
 nx.draw(G, stop_pos, node_size=5, width=0.5)
@@ -128,6 +133,7 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 
 
 # %% Write the graph to .gml
-nx.write_gml(G, "dart_stops.gml")
-
+Gout = G.__class__(G)
+Gout = remove_edge_attrs(Gout, "trip_times")
+nx.write_gml(Gout, "data/dart_stops.gml.gz")
 # %%
