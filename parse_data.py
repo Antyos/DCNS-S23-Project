@@ -8,6 +8,7 @@ import more_itertools
 import networkx as nx
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 DATA_DIR = Path("data/gtfs-dart-2023-02-28")
 
@@ -56,21 +57,6 @@ nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "fiel
 
 
 # %%
-def latlon_to_pos(row):
-    return np.array(row.values)
-
-
-# Get stop locations based on latitude / longitude as a dictionary networkx format:
-# { node_id: np.array([x, y]), ... }
-# In the case of the stops data, this looks like:
-# { stop_id: np.array([stop_lon, stop_lat]), ... }
-stop_pos = (
-    stops.set_index("stop_id")[["stop_lon", "stop_lat"]]
-    .apply(latlon_to_pos, axis=1)
-    .to_dict()
-)
-
-# %%
 
 # Flow of data lookups to generate routes
 # routes --route_id-> trips --trip_id-> stop_times --stop_id-> stops
@@ -90,7 +76,7 @@ G = nx.DiGraph()
 r1 = routes.route_id[0]
 r1_trips = trips[trips.route_id == r1]
 # for trip_id in r1_trips["trip_id"].drop_duplicates():
-for trip_id in trips["trip_id"].drop_duplicates():
+for trip_id in tqdm(trips["trip_id"].drop_duplicates()):
     trip_stop_times = (
         stop_times[stop_times.trip_id == trip_id]
         .set_index("stop_sequence")
@@ -103,6 +89,25 @@ for trip_id in trips["trip_id"].drop_duplicates():
         else:
             G[s1.stop_id][s2.stop_id]["trip_times"].append(trip_time)
     # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
+
+
+# %%
+def latlon_to_pos(row):
+    return np.array(row.values)
+
+
+# Get stop locations based on latitude / longitude as a dictionary networkx format:
+# { node_id: np.array([x, y]), ... }
+# In the case of the stops data, this looks like:
+# { stop_id: np.array([stop_lon, stop_lat]), ... }
+stop_pos = (
+    stops.set_index("stop_id")[["stop_lon", "stop_lat"]]
+    .apply(latlon_to_pos, axis=1)
+    .to_dict()
+)
+
+# Set node attributes
+nx.set_node_attributes(G, stop_pos, "pos")
 
 # %% Average trip times for each node
 num_trips = {
@@ -133,7 +138,12 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 
 
 # %% Write the graph to .gml
-Gout = G.__class__(G)
-Gout = remove_edge_attrs(Gout, "trip_times")
-nx.write_gml(Gout, "data/dart_stops.gml.gz")
+Gout = remove_edge_attrs(G.__class__(G), "trip_times")
+# Convert pos from numpy array to list so it can be exported as gml
+nx.set_node_attributes(
+    Gout,
+    {node: pos.tolist() for node, pos in nx.get_node_attributes(Gout, "pos").items()},
+    "pos",
+)
+nx.write_gml(Gout, "data/dart_stops.gml")
 # %%
