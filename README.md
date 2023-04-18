@@ -36,3 +36,4 @@ Final project for UTD SYSM 6302 / MECH 6317 S23. Analysis of DART bus network.
   computers with math.
     - Period of waiting between bus stops
 - [ ] Analyze travel time variance over times of the course of a day
+- [ ] Investigate Google API (optional)
