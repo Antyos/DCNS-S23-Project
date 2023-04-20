@@ -9,24 +9,24 @@ Final project for UTD SYSM 6302 / MECH 6317 S23. Analysis of DART bus network.
 ## Analysis
 
 - [ ] Alignment
-- [ ] Assortativty
-- [ ] Centrality <--
-- [ ] Clustering <--
-- [ ] Cocitation
-- [ ] Components
-- [ ] Communities
-- [ ] Configuration model
-- [ ] Degree distribution <--
-- [ ] Diameter
-- [ ] Diffusion <--
-- [ ] Flow <--
+- [ ] Assortativty [DS]
+- [ ] Centrality <-- [DS]
+- [ ] Clustering <-- [DS]
+- [ ] Cocitation <-- [DS]
+- [ ] Components <-- [AG]
+- [ ] Communities [DS]
+- [ ] Configuration model [DS]
+- [x] Degree distribution [AG]
+- [x] Diameter [AG]
+- [ ] Diffusion <-- [AG]
+- [ ] Flow <-- [AG]
 - [ ] Motifs
-- [ ] Percolation
-- [ ] Random networks
-- [ ] Sampling
-- [ ] SIR/Cascade
-- [ ] Trees
-- [ ] Visualization <--
+- [ ] Percolation <-- [DS]
+- [ ] Random networks <-- [DS]
+- [ ] Sampling <-- [AG]
+- [ ] SIR/Cascade <-- [AG]
+- [ ] Trees <-- [AG]
+- [x] Visualization <-- [AG]
 - [ ] Others
 
 ## Todo
