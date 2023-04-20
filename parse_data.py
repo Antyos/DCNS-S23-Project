@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from graph_utils import node_ndarray_to_list, remove_edge_attrs
+
 DATA_DIR = Path("data/gtfs-dart-2023-02-28")
 
 # %%
@@ -122,16 +124,6 @@ nx.set_edge_attributes(G, num_trips, "num_trips")
 nx.set_edge_attributes(G, avg_trip_times, "weight")
 
 
-# %% Remove list of trip times
-def remove_edge_attrs(G, attrs: Union[Iterable[str], str]):
-    for n1, n2, d in G.edges(data=True):
-        if isinstance(attrs, str):
-            d.pop(attrs)
-        for attr in attrs:
-            d.pop(attr, None)
-    return G
-
-
 # %% Convert the trip into a DiGraph
 nx.draw(G, stop_pos, node_size=5, width=0.5)
 # G.add_nodes_from(trip1_stop_times.stop_id.values)
@@ -140,10 +132,6 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 # %% Write the graph to .gml
 Gout = remove_edge_attrs(G.__class__(G), "trip_times")
 # Convert pos from numpy array to list so it can be exported as gml
-nx.set_node_attributes(
-    Gout,
-    {node: pos.tolist() for node, pos in nx.get_node_attributes(Gout, "pos").items()},
-    "pos",
-)
+node_ndarray_to_list(Gout, "pos")
 nx.write_gml(Gout, "data/dart_stops.gml")
 # %%
