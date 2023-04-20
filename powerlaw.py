@@ -78,11 +78,7 @@ def calc_powerlaw_multi(
         sharey=sharey,
     )
 
-    axes_by_col: list[tuple[plt.Axes, plt.Axes]] = (
-        list(zip(*axes))
-        if len(axes) > 1 and isinstance(axes[0], list)
-        else [tuple(axes)]  # type: ignore
-    )
+    axes_by_col = np.atleast_2d(axes).T
 
     # Default to empty lists for zip
     kmins = kmins or []
