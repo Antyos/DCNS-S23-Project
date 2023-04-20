@@ -10,9 +10,12 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from graph_utils import node_attr_ndarray_to_list, remove_edge_attrs
+try:
+    from .graph_utils import node_attr_ndarray_to_list, remove_edge_attrs
+except ImportError:
+    from graph_utils import node_attr_ndarray_to_list, remove_edge_attrs  # type: ignore
 
-DATA_DIR = Path("data/gtfs-dart-2023-02-28")
+DATA_DIR = Path(__file__).parent / "../data/gtfs-dart-2023-02-28"
 
 # %%
 nodes = pd.read_csv(DATA_DIR / "nodes.txt")
