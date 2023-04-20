@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from graph_utils import node_ndarray_to_list, remove_edge_attrs
+from graph_utils import node_attr_ndarray_to_list, remove_edge_attrs
 
 DATA_DIR = Path("data/gtfs-dart-2023-02-28")
 
@@ -132,6 +132,6 @@ nx.draw(G, stop_pos, node_size=5, width=0.5)
 # %% Write the graph to .gml
 Gout = remove_edge_attrs(G.__class__(G), "trip_times")
 # Convert pos from numpy array to list so it can be exported as gml
-node_ndarray_to_list(Gout, "pos")
+node_attr_ndarray_to_list(Gout, "pos")
 nx.write_gml(Gout, "data/dart_stops.gml")
 # %%

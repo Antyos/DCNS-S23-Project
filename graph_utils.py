@@ -19,7 +19,7 @@ def remove_edge_attrs(G: GGraph, attrs: Union[Iterable[str], str]) -> GGraph:
     return G
 
 
-def node_list_to_ndarray(G: Graph, attr: str):
+def node_attr_list_to_ndarray(G: Graph, attr: str):
     """Convert node attributes of a graph from a list to a numpy array"""
     nx.set_node_attributes(
         G,
@@ -28,7 +28,7 @@ def node_list_to_ndarray(G: Graph, attr: str):
     )
 
 
-def node_ndarray_to_list(G: Graph, attr: str):
+def node_attr_ndarray_to_list(G: Graph, attr: str):
     """Convert node attributes of a graph from a numpy array to a list"""
     nx.set_node_attributes(
         G,
