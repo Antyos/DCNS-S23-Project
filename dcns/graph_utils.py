@@ -1,3 +1,4 @@
+import itertools
 from typing import Iterable, TypeVar, Union
 
 import networkx as nx
@@ -35,3 +36,35 @@ def node_attr_ndarray_to_list(G: Graph, attr: str):
         {node: pos.tolist() for node, pos in nx.get_node_attributes(G, attr).items()},
         attr,
     )
+
+
+def bibliographic_coupling(G: nx.DiGraph) -> nx.Graph:
+    B = nx.Graph()
+    B.add_nodes_from(G.nodes())
+
+    for ni, nj in itertools.permutations(G.nodes, 2):
+        weight = sum(
+            G[ni][nk]["weight"] * G[nj][nk]["weight"]
+            for nk in (set(G.successors(ni)) & set(G.successors(nj)))
+        )
+
+        if weight != 0:
+            B.add_edge(nj, ni, weight=weight)
+
+    return B
+
+
+def cocitation(G: nx.DiGraph) -> nx.Graph:
+    C = nx.Graph()
+    C.add_nodes_from(G.nodes())
+
+    for ni, nj in itertools.permutations(G.nodes, 2):
+        weight = sum(
+            G[nk][ni]["weight"] * G[nk][nj]["weight"]
+            for nk in (set(G.predecessors(ni)) & set(G.predecessors(nj)))
+        )
+
+        if weight != 0:
+            C.add_edge(nj, ni, weight=weight)
+
+    return C
