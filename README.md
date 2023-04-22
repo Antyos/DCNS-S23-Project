@@ -6,6 +6,9 @@ Andrew Glick, David Simpson
 
 Final project for UTD SYSM 6302 / MECH 6317 S23. Analysis of DART bus network.
 
+> Data obtained from: www.dart.org/transitdata/latest/google_transit.zip
+> See also: DART GTFS data on [MobilityData/mobility-database-catalogs](https://github.com/MobilityData/mobility-database-catalogs/blob/c74327f4a4955ee0189f261478fb04807c067334/catalogs/sources/gtfs/schedule/us-texas-dallas-area-rapid-transit-dart-gtfs-152.json#L4)
+
 ## Analysis
 
 - [ ] Alignment

@@ -1,0 +1,99 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+24621,DART,001,MALCOLM X/MAPLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24622,DART,003,ROSS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24640,DART,005,LOVE FIELD SHUTTLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24623,DART,009,JEFFERSON GASTON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24624,DART,013,ERVAY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24625,DART,015,BUCKNER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24626,DART,016,FERGUSON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24627,DART,017,SKILLMAN,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24628,DART,018,SAMUELL,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24629,DART,020,NORTHWEST HWY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24630,DART,022,FOREST LANE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24631,DART,023,HASKELL,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24632,DART,025,COCKRELL HILL NORTH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24633,DART,027,RIDGECREST,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24634,DART,028,SINGLETON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24635,DART,030,LAKE JUNE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24636,DART,038,LEDBETTER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24637,DART,041,BONNIE VIEW,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24638,DART,045,MARSALIS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24639,DART,047,POLK,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24641,DART,057,WESTMORELAND,,3,https://www.dart.org/guide/transit-and-use/bus-routes,FFCC00,FFFFFF
+24642,DART,101,HAMPTON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24643,DART,102,FORT WORTH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24644,DART,103,CEDAR SPRINGS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24645,DART,104,ILLINOIS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24646,DART,105,HENDERSON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24647,DART,106,BICKERS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24648,DART,108,CAMP WISDOM,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24649,DART,109,BECKLEY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24650,DART,114,EAST OAK CLIFF,,3,https://www.dart.org/guide/transit-and-use/bus-routes,794489,FFFFFF
+24651,DART,200,SPRING VALLEY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24653,DART,202,BUCKINGHAM,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24654,DART,203,CENTERVILLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24655,DART,204,MILLER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24656,DART,207,LEMMON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24657,DART,209,MCKINNEY/COLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24658,DART,212,LA PRADA,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24659,DART,213,HARRY HINES,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24660,DART,214,LINDSLEY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24661,DART,215,KIEST,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24662,DART,216,EVERGLADE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24663,DART,217,LANCASTER/RAMONA,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24664,DART,218,MILITARY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24665,DART,219,SYLVAN,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24666,DART,220,SCYENE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24667,DART,221,MERRIFIELD,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24668,DART,222,REGAL ROW/RECORD CROSSING,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24669,DART,223,CLARK,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24670,DART,224,I-30 BROADWAY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24671,DART,225,NURSERY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24672,DART,226,CLARENDON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24673,DART,227,O-CONNOR - LUNA - VALLEY VIEW,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24674,DART,228,SIMPSON STUART,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24675,DART,229,MACARTHUR - BELTLINE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24676,DART,230,IRVING BLVD,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24677,DART,231,S BELTLINE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24678,DART,232,FRANKFORD,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24679,DART,233,JOSEY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24680,DART,234,PARKER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24681,DART,235,TIMBERGLEN/MIDWAY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24682,DART,236,W 15,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24683,DART,237,PRESTON,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24684,DART,238,NAAMAN FOREST/BELTLINE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24685,DART,239,DALLAS - ADDISON - LEGACY,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24686,DART,240,CAMPBELL,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24687,DART,241,COIT,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24688,DART,242,WALNUT HILL,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24689,DART,243,PLANO RD,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24690,DART,245,SHILOH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24691,DART,247,JUPITER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24692,DART,249,COLUMBIA,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24693,DART,250,E BELTLINE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24694,DART,251,SATURN,,3,https://www.dart.org/guide/transit-and-use/bus-routes,6BCCE7,FFFFFF
+24695,DART,305,ADDISON EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,F280A4,FFFFFF
+24696,DART,306,GLENN HEIGHTS EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,F280A4,FFFFFF
+24697,DART,308,NORTHWEST PLANO EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,F280A4,FFFFFF
+24698,DART,378,REDBIRD EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,F280A4,FFFFFF
+24699,DART,383,LAKE RAY HUBBARD EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,F280A4,FFFFFF
+24700,DART,402,NORTHPARK SHUTTLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24702,DART,408,PALISADES E-SHUTTLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24703,DART,412,MEDICAL CITY E-SHUTTLE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24704,DART,413,TI SHUTTLE - FOREST LANE CAMPUS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24705,DART,417,TI SHUTTLE- MAIN CAMPUS NORTH ROUTE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24707,DART,419,TI SHUTTLE- MAIN CAMPUS SOUTH ROUTE,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24708,DART,421,BAYLOR BRYAN TOWER,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24709,DART,422,UT SOUTHWESTERN SOUTH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24710,DART,423,UT SOUTHWESTERN NORTH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24711,DART,425,MCKINNEY AVENUE TROLLEY,,5,https://www.dart.org/guide/transit-and-use/rail,6A081D,FFFFFF
+24712,DART,431,CENTREPORT/DFW REMOTE SOUTH,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24715,DART,440,MUSTANG EXPRESS,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24716,DART,442,BUSH/ MEADOWS-MOCKINGBIRD STA.,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24916,DART,620,DALLAS STREETCAR,,5,https://www.dart.org/guide/transit-and-use/rail,000000,FFFFFF
+24735,DART,883,UT DALLAS COMBINED,,3,https://www.dart.org/guide/transit-and-use/bus-routes,98CC67,FFFFFF
+24924,DART,BLUE,DART LIGHT RAIL - BLUE LINE,,0,https://www.dart.org/guide/transit-and-use/rail,198BC3,FFFFFF
+24925,DART,GREEN,DART LIGHT RAIL - GREEN LINE,,0,https://www.dart.org/guide/transit-and-use/rail,006F38,FFFFFF
+24926,DART,ORANGE,DART LIGHT RAIL - ORANGE LINE,,0,https://www.dart.org/guide/transit-and-use/rail,F68B1F,FFFFFF
+24927,DART,RED,DART LIGHT RAIL - RED LINE,,0,https://www.dart.org/guide/transit-and-use/rail,FD3E3E,FFFFFF
+24929,DART,TRE,TRINITY RAILWAY,,2,https://www.dart.org/guide/transit-and-use/rail,112458,FFFFFF
