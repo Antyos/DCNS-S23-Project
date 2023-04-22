@@ -18,7 +18,6 @@ except ImportError:
 DATA_DIR = Path(__file__).parent / "../data/gtfs-dart-2023-02-28"
 
 # %%
-nodes = pd.read_csv(DATA_DIR / "nodes.txt")
 routes = pd.read_csv(DATA_DIR / "routes.txt")
 trips = pd.read_csv(DATA_DIR / "trips.txt")
 stop_times = pd.read_csv(DATA_DIR / "stop_times.txt")
@@ -39,8 +38,8 @@ stop_times["departure_time_sec"] = stop_times.departure_time.apply(
 ).dt.total_seconds()
 
 
-# %% Get the columns from each file for comparison
 def graph_common_data_fields(data_dir: Path, draw=True):
+    """Graph the common columns from data files."""
     # Read all files in DATA_DIR
     d = {f.stem: pd.read_csv(f) for f in data_dir.iterdir()}
 
@@ -69,80 +68,79 @@ def graph_common_data_fields(data_dir: Path, draw=True):
     return G
 
 
-# %%
+def make_graph():
+    # Flow of data lookups to generate routes
+    # routes --route_id-> trips --trip_id-> stop_times --stop_id-> stops
 
-# Flow of data lookups to generate routes
-# routes --route_id-> trips --trip_id-> stop_times --stop_id-> stops
+    G = nx.DiGraph()
 
-# r1_name = routes.route_short_name[0]
+    r1 = routes.route_id[0]
+    r1_trips = trips[trips.route_id == r1]
+    # for trip_id in list(r1_trips["trip_id"].drop_duplicates())[140:150]:
+    for trip_id in tqdm(trips["trip_id"].drop_duplicates()):
+        trip_stop_times = (
+            stop_times[stop_times.trip_id == trip_id]
+            .set_index("stop_sequence")
+            .sort_index()
+        )
+        for s1, s2 in more_itertools.pairwise(trip_stop_times.itertuples(index=False)):
+            trip_time = s2.arrival_time_sec - s1.arrival_time_sec
+            if not G.has_edge(s1.stop_id, s2.stop_id):
+                G.add_edge(s1.stop_id, s2.stop_id, trip_times=[trip_time])
+            else:
+                G[s1.stop_id][s2.stop_id]["trip_times"].append(trip_time)
+        # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
 
-# The short names from nodes.txt are misleading because nodes.txt is a pain.
-# There are duplicate entries for stops and not all stops are included there.
-# short_names = (
-#     nodes[nodes.ROUTE_NAME_SHORT == r1_name][["NODE", "STOP_ID"]]
-#     .drop_duplicates()
-#     .set_index("STOP_ID")
-#     .drop_duplicates()
-# )
-G = nx.DiGraph()
+    nx.set_node_attributes(G, get_stop_pos(stops), "pos")
+    nx.set_node_attributes(G, stops.set_index("stop_id").stop_name.to_dict(), "name")
+    add_edge_attributes(G)
 
-r1 = routes.route_id[0]
-r1_trips = trips[trips.route_id == r1]
-# for trip_id in list(r1_trips["trip_id"].drop_duplicates())[140:150]:
-for trip_id in tqdm(trips["trip_id"].drop_duplicates()):
-    trip_stop_times = (
-        stop_times[stop_times.trip_id == trip_id]
-        .set_index("stop_sequence")
-        .sort_index()
+    return G
+
+
+def get_stop_pos(stops) -> dict:
+    """Get stop locations based on latitude / longitude as a dictionary
+
+    Uses the networkx format:
+        { node_id: np.array([x, y]), ... }
+    In the case of the stops data, this looks like:
+        { stop_id: np.array([stop_lon, stop_lat]), ... }
+    """
+    return (
+        stops.set_index("stop_id")[["stop_lon", "stop_lat"]]
+        .apply(lambda row: np.array(row.values), axis=1)
+        .to_dict()
     )
-    for s1, s2 in more_itertools.pairwise(trip_stop_times.itertuples(index=False)):
-        trip_time = s2.arrival_time_sec - s1.arrival_time_sec
-        if not G.has_edge(s1.stop_id, s2.stop_id):
-            G.add_edge(s1.stop_id, s2.stop_id, trip_times=[trip_time])
-        else:
-            G[s1.stop_id][s2.stop_id]["trip_times"].append(trip_time)
-    # trip_stop_names = trip_stop_ids.map(stops.set_index("stop_id")["stop_name"])
+
+
+def add_edge_attributes(G):
+    """Add number of trips & avg time time to edges"""
+    num_trips = {
+        trip: len(times)
+        for trip, times in nx.get_edge_attributes(G, "trip_times").items()
+    }
+    avg_trip_times = {
+        trip: round(sum(times) / len(times), 2)
+        for trip, times in nx.get_edge_attributes(G, "trip_times").items()
+    }
+
+    nx.set_edge_attributes(G, num_trips, "num_trips")
+    nx.set_edge_attributes(G, avg_trip_times, "weight")
+
+
+def save_gml(G, output_path):
+    # Edges may have a few hundred trips each which would clutter the .gml file so we purge
+    # them first
+    Gout = remove_edge_attrs(G.__class__(G), "trip_times")
+    # Convert pos from numpy array to list so it can be exported as gml
+    node_attr_ndarray_to_list(Gout, "pos")
+    nx.write_gml(Gout, output_path)
 
 
 # %%
 
-# Get stop locations based on latitude / longitude as a dictionary networkx format:
-# { node_id: np.array([x, y]), ... }
-# In the case of the stops data, this looks like:
-# { stop_id: np.array([stop_lon, stop_lat]), ... }
-stop_pos = (
-    stops.set_index("stop_id")[["stop_lon", "stop_lat"]]
-    .apply(lambda row: np.array(row.values), axis=1)
-    .to_dict()
-)
-
-# Set node attributes
-nx.set_node_attributes(G, stop_pos, "pos")
-nx.set_node_attributes(G, stops.set_index("stop_id").stop_name.to_dict(), "name")
-
-# %% Average trip times for each node
-num_trips = {
-    trip: len(times) for trip, times in nx.get_edge_attributes(G, "trip_times").items()
-}
-avg_trip_times = {
-    trip: round(sum(times) / len(times), 2)
-    for trip, times in nx.get_edge_attributes(G, "trip_times").items()
-}
-
-nx.set_edge_attributes(G, num_trips, "num_trips")
-nx.set_edge_attributes(G, avg_trip_times, "weight")
-
-
-# %% Convert the trip into a DiGraph
+G = make_graph()
+stop_pos = get_stop_pos(stops)
 nx.draw(G, stop_pos, node_size=5, width=0.5)
-# G.add_nodes_from(trip1_stop_times.stop_id.values)
 
-
-# %% Write the graph to .gml
-# Edges may have a few hundred trips each which would clutter the .gml file so we purge
-# them first
-Gout = remove_edge_attrs(G.__class__(G), "trip_times")
-# Convert pos from numpy array to list so it can be exported as gml
-node_attr_ndarray_to_list(Gout, "pos")
-nx.write_gml(Gout, "data/dart_stops.gml")
-# %%
+save_gml(G, "../data/dart_stops.gml")
