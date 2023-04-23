@@ -1,12 +1,13 @@
 import heapq
 from collections import deque
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 
 import networkx as nx
 
 from .graph_utils import Graph
 
 Node = Any
+SearchGenerator = Generator[tuple[dict[Node, None], dict[Node, float]], None, None]
 
 
 class NoPathBetweenNodes(ValueError):
@@ -17,12 +18,15 @@ class NoPathBetweenNodes(ValueError):
         super().__init__(message)
 
 
+### SEARCH GENERATOR FUNCTIONS ###
+
+
 def astar_search(
     graph: Graph,
     start: Node,
     end: Node,
     heuristic: Optional[dict[Node, float]] = None,
-):
+) -> SearchGenerator:
     """Find the shortest path between two nodes in a weighted graph using the a* algorithm."""
     # Determine if the graph is directed or undirected
     is_directed = isinstance(graph, nx.DiGraph)
@@ -71,6 +75,63 @@ def astar_search(
     raise NoPathBetweenNodes(start, end)
 
 
+def bfs_search(graph: Graph, start: Node, end: Node) -> SearchGenerator:
+    """
+    Find the shortest path between two nodes in a weighted graph using BFS algorithm.
+
+    Args:
+        graph: The input graph represented as a NetworkX Graph object.
+        start: The index of the start node.
+        end: The index of the end node.
+
+    Returns:
+        A tuple containing the shortest path as a list of node IDs and its total length.
+    """
+    # Initialize the distances of all nodes to infinity
+    distance = {node: float("inf") for node in graph.nodes()}
+    distance[start] = 0
+
+    # Initialize the predecessor dictionary
+    predecessor = {start: None}
+
+    # Initialize the queue with the start node
+    queue = [start]
+
+    while queue:
+        # Pop the node from the front of the queue
+        curr_node = queue.pop(0)
+
+        # If we've reached the end node, terminate early
+        if curr_node == end:
+            return
+
+        # Iterate over the neighbors of the current node
+        neighbors = (
+            graph.successors(curr_node)
+            if isinstance(graph, nx.DiGraph)
+            else graph.neighbors(curr_node)
+        )
+        for neighbor in neighbors:
+            # Calculate the distance from the current node to the neighbor
+            edge_weight = graph[curr_node][neighbor]["weight"]
+            neighbor_dist = distance[curr_node] + edge_weight
+
+            # Update the distance and predecessor of the neighbor if a shorter path was found
+            if neighbor not in distance or neighbor_dist < distance[neighbor]:
+                distance[neighbor] = neighbor_dist
+                predecessor[neighbor] = curr_node
+
+                # Add the neighbor to the queue
+                queue.append(neighbor)
+            yield predecessor, distance
+
+    # If the end node was not found, raise an exception
+    raise NoPathBetweenNodes(start, end)
+
+
+### GENERIC PATHFINDING FUNCTIONS ###
+
+
 def predecessor_path(predecessor: dict, start: Node, end: Node):
     # Construct the shortest path from the predecessor dictionary
     path = [end]
@@ -79,6 +140,22 @@ def predecessor_path(predecessor: dict, start: Node, end: Node):
         yield path
 
     return path
+
+
+def pathfind(search_generator: SearchGenerator, start: Node, end: Node):
+    """Generic pathfind using a search generator function and start/end nodes."""
+    try:
+        # Use deque to get the last item in the generator
+        predecessor, distance = deque(search_generator, maxlen=1).pop()
+    except NoPathBetweenNodes:
+        raise
+    path = deque(predecessor_path(predecessor, start, end), maxlen=1).pop()
+    path.reverse()
+
+    return path, distance[end], len(predecessor)
+
+
+### ACTUAL PATHFINDING FUNCTIONS ###
 
 
 def astar(
@@ -95,24 +172,13 @@ def astar(
     distance: length of path (sum of edgeweights)
     num_nodes_searched: number of nodes searched before finding the path
     """
-    # Use deque to get the last item in the generator
     try:
-        predecessor, distance = deque(
-            astar_search(graph, start, end, heuristic), maxlen=1
-        ).pop()
+        return pathfind(astar_search(graph, start, end, heuristic), start, end)
     except NoPathBetweenNodes:
         raise
-    path = deque(predecessor_path(predecessor, start, end), maxlen=1).pop()
-    path.reverse()
-
-    return path, distance[end], len(predecessor)
 
 
-def dijkstra(
-    graph: Graph,
-    start: Node,
-    end: Node,
-):
+def dijkstra(graph: Graph, start: Node, end: Node):
     """Get the shortest path between two nodes in a graph using Dijkstra's algorithm.
 
     Returns
@@ -122,5 +188,22 @@ def dijkstra(
     num_nodes_searched: number of nodes searched before finding the path
     """
     heuristic = {node: 0.0 for node in graph.nodes()}
-    # Use deque to get the last item in the generator
-    return astar(graph, start, end, heuristic)
+    try:
+        return pathfind(astar_search(graph, start, end, heuristic), start, end)
+    except NoPathBetweenNodes:
+        raise
+
+
+def bfs(graph: Graph, start: Node, end: Node):
+    """Get the shortest path between two nodes in a graph using Breadth-First Search.
+
+    Returns
+    -------
+    final_path: list of Nodes
+    distance: length of path (sum of edgeweights)
+    num_nodes_searched: number of nodes searched before finding the path
+    """
+    try:
+        return pathfind(bfs_search(graph, start, end), start, end)
+    except NoPathBetweenNodes:
+        raise
