@@ -7,7 +7,14 @@ import networkx as nx
 from .graph_utils import Graph
 
 Node = Any
+
 SearchGenerator = Generator[tuple[dict[Node, None], dict[Node, float]], None, None]
+"""Pathfinding search generator.
+
+Yields:
+predecessor: dict
+distance: dict
+"""
 
 
 class NoPathBetweenNodes(ValueError):
@@ -153,6 +160,27 @@ def pathfind(search_generator: SearchGenerator, start: Node, end: Node):
     path.reverse()
 
     return path, distance[end], len(predecessor)
+
+
+def pathfind_steps(search_generator: SearchGenerator, start: Node, end: Node):
+    """Get a tuple of (searched_nodes, path_nodes) for each pathfinding solve step."""
+    # Search phase
+    try:
+        # We have to make a copy of each dictionary because it is mutated at each step.
+        predecessors = [dict(predecessor) for predecessor, _ in search_generator]
+    except NoPathBetweenNodes:
+        raise
+
+    steps: list[tuple[tuple[Node, ...], tuple[Node, ...]]] = [
+        (tuple(predecessor.keys()), ()) for predecessor in predecessors
+    ]
+
+    # Path phase
+    steps.extend(
+        ((), tuple(path)) for path in predecessor_path(predecessors[-1], start, end)
+    )
+
+    return steps
 
 
 ### ACTUAL PATHFINDING FUNCTIONS ###
