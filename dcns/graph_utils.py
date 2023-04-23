@@ -1,5 +1,5 @@
 import itertools
-from typing import Iterable, TypeVar, Union
+from typing import Iterable, NamedTuple, TypeVar, Union
 
 import networkx as nx
 import numpy as np
@@ -68,3 +68,21 @@ def cocitation(G: nx.DiGraph) -> nx.Graph:
             C.add_edge(nj, ni, weight=weight)
 
     return C
+
+
+class BoundingBox(NamedTuple):
+    x_min: float
+    y_min: float
+    x_max: float
+    y_max: float
+
+
+def in_bbox(point, bbox: BoundingBox) -> bool:
+    """True if a point is inside a bounding box."""
+    return bbox[0] <= point[0] <= bbox[2] and bbox[1] <= point[1] <= bbox[3]
+
+
+def crop_graph(G: Graph, node_pos: dict, bbox: BoundingBox):
+    """Get a subgraph based on node positions inside a bounding box"""
+    nodes_inside = [node for node in G.nodes() if in_bbox(node_pos[node], bbox)]
+    return G.__class__(G.subgraph(nodes_inside))
