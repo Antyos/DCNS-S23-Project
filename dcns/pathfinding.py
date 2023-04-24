@@ -162,8 +162,15 @@ def pathfind(search_generator: SearchGenerator, start: Node, end: Node):
     return path, distance[end], len(predecessor)
 
 
-def pathfind_steps(search_generator: SearchGenerator, start: Node, end: Node):
-    """Get a tuple of (searched_nodes, path_nodes) for each pathfinding solve step."""
+def pathfind_steps(
+    search_generator: SearchGenerator, start: Node, end: Node, sample_steps=(100, 5)
+):
+    """Get a tuple of (searched_nodes, path_nodes) for each pathfinding solve step.
+
+    Parameters
+    ----------
+    sample_steps: Take every n samples of the predecessors or search steps
+    """
     # Search phase
     try:
         # We have to make a copy of each dictionary because it is mutated at each step.
@@ -172,13 +179,22 @@ def pathfind_steps(search_generator: SearchGenerator, start: Node, end: Node):
         raise
 
     steps: list[tuple[tuple[Node, ...], tuple[Node, ...]]] = [
-        (tuple(predecessor.keys()), ()) for predecessor in predecessors
+        (tuple(predecessor.keys()), ())
+        for predecessor in predecessors[:: sample_steps[0]]
     ]
 
+    final_predecessors = tuple(predecessors[-1].keys())
+
     # Path phase
+    paths = [tuple(path) for path in predecessor_path(predecessors[-1], start, end)]
+
     steps.extend(
-        ((), tuple(path)) for path in predecessor_path(predecessors[-1], start, end)
+        (final_predecessors, tuple(path)) for path in paths[:: sample_steps[1]]
     )
+
+    # Make sure to include the last step in there
+    if len(paths) - 1 % sample_steps[1] != 0:
+        steps.append((final_predecessors, paths[-1]))
 
     return steps
 
