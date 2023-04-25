@@ -1,8 +1,10 @@
 import heapq
 from collections import deque
-from typing import Any, Generator, Optional
+from typing import Any, Callable, Generator, Optional, Union
 
 import networkx as nx
+import numpy as np
+from numpy.typing import NDArray
 
 from .graph_utils import Graph
 
@@ -32,14 +34,16 @@ def astar_search(
     graph: Graph,
     start: Node,
     end: Node,
-    heuristic: Optional[dict[Node, float]] = None,
+    heuristic: Optional[Union[dict[Node, float], Callable[[Node, Node], float]]] = None,
 ) -> SearchGenerator:
     """Find the shortest path between two nodes in a weighted graph using the a* algorithm."""
     # Determine if the graph is directed or undirected
     is_directed = isinstance(graph, nx.DiGraph)
 
-    # Set the heuristic to zero if not provided
-    if not heuristic:
+    # Coerce the heuristic into a dictionary
+    if callable(heuristic):
+        heuristic = {node: heuristic(node, end) for node in graph.nodes()}
+    if heuristic is None:
         heuristic = {node: 0.0 for node in graph.nodes()}
 
     # Initialize the distances of all nodes to infinity
@@ -80,6 +84,24 @@ def astar_search(
         yield predecessor, distance
 
     raise NoPathBetweenNodes(start, end)
+
+
+def astar_dist_search(
+    graph: Graph,
+    start: Node,
+    end: Node,
+    pos=None,
+    dist_func: Optional[Callable[[float], float]] = None,
+) -> SearchGenerator:
+    if pos is None:
+        pos = nx.get_node_attributes(graph, "pos")
+
+    heuristic = {
+        node: float(np.linalg.norm(pos - pos[end])) for node, pos in pos.items()
+    }
+    if dist_func is not None:
+        heuristic = {node: dist_func(dist) for node, dist in heuristic.items()}
+    yield from astar_search(graph, start, end, heuristic)
 
 
 def bfs_search(graph: Graph, start: Node, end: Node) -> SearchGenerator:
@@ -218,6 +240,31 @@ def astar(
     """
     try:
         return pathfind(astar_search(graph, start, end, heuristic), start, end)
+    except NoPathBetweenNodes:
+        raise
+
+
+def astar_dist(
+    graph: Graph,
+    start: Node,
+    end: Node,
+    pos,
+    dist_func: Optional[Callable[[float], float]] = None,
+):
+    """Get the shortest path between two nodes in a graph using the a* algorithm.
+
+    Uses distance as the heuristic
+
+    Returns
+    -------
+    final_path: list of Nodes
+    distance: length of path (sum of edgeweights)
+    num_nodes_searched: number of nodes searched before finding the path
+    """
+    try:
+        return pathfind(
+            astar_dist_search(graph, start, end, pos, dist_func), start, end
+        )
     except NoPathBetweenNodes:
         raise
 
