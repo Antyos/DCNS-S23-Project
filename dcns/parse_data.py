@@ -123,14 +123,21 @@ def add_edge_attributes(G,flag):
         trip: round(sum(times) / len(times), 2)
         for trip, times in nx.get_edge_attributes(G, "trip_times").items()
     }
+    num_trips_over5000 = {
+        trip: num_trips[trip]/5000
+        for trip, times in nx.get_edge_attributes(G, "trip_times").items()
+    }
     if flag == 1:
         nx.set_edge_attributes(G, num_trips, "num_trips")
         nx.set_edge_attributes(G, avg_trip_times, "weight")
     elif flag == 2:
         nx.set_edge_attributes(G, num_trips, "weight")
         nx.set_edge_attributes(G, avg_trip_times, "avg_trip_times")
+    elif flag == 3:
+        nx.set_edge_attributes(G, num_trips_over5000, "weight")
+        nx.set_edge_attributes(G, avg_trip_times, "avg_trip_times")
     else:
-        print("Put either 1 or 2 in the second argument")
+        print("Put either 1 2 or 3 in the second argument")
 
 
 def save_gml(G, output_path):
@@ -146,8 +153,10 @@ def save_gml(G, output_path):
 
 G_time = make_graph(1)
 G_freq = make_graph(2)
+G_freq_over5000 = make_graph(3)
 stop_pos = get_stop_pos(stops)
 nx.draw(G_time, stop_pos, node_size=5, width=0.5)
 
 save_gml(G_time, "../data/dart_stops_time.gml")
 save_gml(G_freq, "../data/dart_stops_freq.gml")
+save_gml(G_freq_over5000, "../data/dart_stops_freq_over5000.gml")
