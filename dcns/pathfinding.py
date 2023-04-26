@@ -35,6 +35,7 @@ def astar_search(
     start: Node,
     end: Node,
     heuristic: Optional[Union[dict[Node, float], Callable[[Node, Node], float]]] = None,
+    weight="weight",
 ) -> SearchGenerator:
     """Find the shortest path between two nodes in a weighted graph using the a* algorithm."""
     # Determine if the graph is directed or undirected
@@ -70,7 +71,7 @@ def astar_search(
         )
         for neighbor in neighbors:
             # Calculate the distance from the current node to the neighbor
-            edge_weight = graph[curr_node][neighbor]["weight"]
+            edge_weight = graph[curr_node][neighbor][weight]
             new_dist = distance[curr_node] + edge_weight
 
             # Update the distance and predecessor of the neighbor if a shorter path was found
@@ -90,21 +91,25 @@ def astar_dist_search(
     graph: Graph,
     start: Node,
     end: Node,
-    pos=None,
+    pos: Optional[dict] = None,
     dist_func: Optional[Callable[[float], float]] = None,
+    weight="weight",
 ) -> SearchGenerator:
     if pos is None:
         pos = nx.get_node_attributes(graph, "pos")
+        assert pos is not None
 
     heuristic = {
         node: float(np.linalg.norm(pos - pos[end])) for node, pos in pos.items()
     }
     if dist_func is not None:
         heuristic = {node: dist_func(dist) for node, dist in heuristic.items()}
-    yield from astar_search(graph, start, end, heuristic)
+    yield from astar_search(graph, start, end, heuristic=heuristic, weight=weight)
 
 
-def bfs_search(graph: Graph, start: Node, end: Node) -> SearchGenerator:
+def bfs_search(
+    graph: Graph, start: Node, end: Node, weight="weight"
+) -> SearchGenerator:
     """
     Find the shortest path between two nodes in a weighted graph using BFS algorithm.
 
@@ -142,7 +147,7 @@ def bfs_search(graph: Graph, start: Node, end: Node) -> SearchGenerator:
         )
         for neighbor in neighbors:
             # Calculate the distance from the current node to the neighbor
-            edge_weight = graph[curr_node][neighbor]["weight"]
+            edge_weight = graph[curr_node][neighbor][weight]
             neighbor_dist = distance[curr_node] + edge_weight
 
             # Update the distance and predecessor of the neighbor if a shorter path was found
@@ -229,6 +234,7 @@ def astar(
     start: Node,
     end: Node,
     heuristic: Optional[dict[Node, float]] = None,
+    weight="weight",
 ):
     """Get the shortest path between two nodes in a graph using the a* algorithm.
 
@@ -239,7 +245,11 @@ def astar(
     num_nodes_searched: number of nodes searched before finding the path
     """
     try:
-        return pathfind(astar_search(graph, start, end, heuristic), start, end)
+        return pathfind(
+            astar_search(graph, start, end, heuristic=heuristic, weight=weight),
+            start,
+            end,
+        )
     except NoPathBetweenNodes:
         raise
 
@@ -250,6 +260,7 @@ def astar_dist(
     end: Node,
     pos,
     dist_func: Optional[Callable[[float], float]] = None,
+    weight="weight",
 ):
     """Get the shortest path between two nodes in a graph using the a* algorithm.
 
@@ -263,13 +274,17 @@ def astar_dist(
     """
     try:
         return pathfind(
-            astar_dist_search(graph, start, end, pos, dist_func), start, end
+            astar_dist_search(
+                graph, start, end, pos=pos, dist_func=dist_func, weight=weight
+            ),
+            start,
+            end,
         )
     except NoPathBetweenNodes:
         raise
 
 
-def dijkstra(graph: Graph, start: Node, end: Node):
+def dijkstra(graph: Graph, start: Node, end: Node, weight="weight"):
     """Get the shortest path between two nodes in a graph using Dijkstra's algorithm.
 
     Returns
@@ -280,12 +295,16 @@ def dijkstra(graph: Graph, start: Node, end: Node):
     """
     heuristic = {node: 0.0 for node in graph.nodes()}
     try:
-        return pathfind(astar_search(graph, start, end, heuristic), start, end)
+        return pathfind(
+            astar_search(graph, start, end, heuristic=heuristic, weight=weight),
+            start,
+            end,
+        )
     except NoPathBetweenNodes:
         raise
 
 
-def bfs(graph: Graph, start: Node, end: Node):
+def bfs(graph: Graph, start: Node, end: Node, weight="weight"):
     """Get the shortest path between two nodes in a graph using Breadth-First Search.
 
     Returns
@@ -295,6 +314,6 @@ def bfs(graph: Graph, start: Node, end: Node):
     num_nodes_searched: number of nodes searched before finding the path
     """
     try:
-        return pathfind(bfs_search(graph, start, end), start, end)
+        return pathfind(bfs_search(graph, start, end, weight=weight), start, end)
     except NoPathBetweenNodes:
         raise
