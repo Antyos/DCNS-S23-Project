@@ -1,9 +1,10 @@
 import itertools
-from typing import Optional
+from typing import Optional, Union
 
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+from numpy.typing import NDArray
 
 
 def degree_sequence(G: nx.Graph):
@@ -63,31 +64,37 @@ def calc_powerlaw_ax(
 
 
 def calc_powerlaw_multi(
-    graphs: dict[str, nx.Graph],
-    kmins: Optional[list[int]] = None,
+    graphs: dict[str, Union[nx.Graph, tuple[nx.Graph, int]]],
     *,
     title: str = "",
     sharey: bool = False,
     figsize: tuple[float, float] = (12, 8),
 ):
-    """Plot degree distribution PDF/CDF for several graphs"""
+    """Plot degree distribution PDF/CDF for several graphs
+
+    Parameters
+    ----------
+    graphs: dict of nx.Graph or tuple[nx.Graph, int]
+        If given in tuple form, the integer is the corresponding kmin value
+    title: str
+    sharey: bool
+        Shares y values across rows of plot
+    figsize: (float, float)
+        Size of figure
+    """
     fig, axes = plt.subplots(
         nrows=2,
         ncols=len(graphs),
         figsize=figsize,
-        sharey=sharey,
+        sharey="row" if sharey else "none",
     )
 
-    axes_by_col = np.atleast_2d(axes).T
-
-    # Default to empty lists for zip
-    kmins = kmins or []
+    axes_by_col: NDArray[np.object_] = np.atleast_2d(axes).T
 
     # For each graph
-    for (name, G), kmin, ax in itertools.zip_longest(
-        graphs.items(), kmins, axes_by_col
-    ):
-        exponent = calc_powerlaw_ax(ax, G, kmin)
+    for (name, G), ax in itertools.zip_longest(graphs.items(), axes_by_col):
+        G_, kmin = G if isinstance(G, tuple) else (G, None)
+        exponent = calc_powerlaw_ax(ax, G_, kmin)
 
         exponent_str = (
             f"α±σ = {exponent[0]:1.2f} +/- {exponent[1]:1.2f}"
