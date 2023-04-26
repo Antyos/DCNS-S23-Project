@@ -1,8 +1,11 @@
 import itertools
 
+import networkx as nx
 import numpy as np
 from numpy.typing import NDArray
 from tqdm import tqdm
+
+from dcns.graph_utils import GGraph
 
 
 def convolve_iter(arr: NDArray):
@@ -82,3 +85,15 @@ def get_close_edges(
             if np.linalg.norm(pos[u] - pos[v]) < max_distance
         )
     return close_edges
+
+
+def with_close_edges(G: GGraph, max_distance, num_partitions=50, **kwargs) -> GGraph:
+    G_ = G.__class__(G)
+    close_edges = get_close_edges(
+        nx.get_node_attributes(G, "pos"), max_distance, num_partitions
+    )
+    G_.add_edges_from(
+        ebunch_to_add=(close_edges | {(v, u) for u, v in close_edges}), **kwargs
+    )
+    # I don't know why mypy hates this
+    return G_  # type: ignore

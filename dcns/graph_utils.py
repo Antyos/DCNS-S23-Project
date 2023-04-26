@@ -1,8 +1,9 @@
 import itertools
-from typing import Iterable, NamedTuple, TypeVar, Union
+from typing import Iterable, TypeVar, Union
 
 import networkx as nx
 import numpy as np
+from numpy.typing import NDArray
 
 Graph = Union[nx.Graph, nx.DiGraph]
 
@@ -70,19 +71,19 @@ def cocitation(G: nx.DiGraph) -> nx.Graph:
     return C
 
 
-class BoundingBox(NamedTuple):
-    x_min: float
-    y_min: float
-    x_max: float
-    y_max: float
+BBox = Union[
+    list[list[float]],
+    tuple[tuple[float, float], tuple[float, float]],
+    NDArray[np.floating],
+]
 
 
-def in_bbox(point, bbox: BoundingBox) -> bool:
+def in_bbox(point, bbox: BBox) -> bool:
     """True if a point is inside a bounding box."""
-    return bbox[0] <= point[0] <= bbox[2] and bbox[1] <= point[1] <= bbox[3]
+    return bbox[0][0] <= point[0] <= bbox[0][1] and bbox[1][0] <= point[1] <= bbox[1][1]
 
 
-def crop_graph(G: Graph, node_pos: dict, bbox: BoundingBox):
+def crop_graph(G: Graph, node_pos: dict, bbox: BBox):
     """Get a subgraph based on node positions inside a bounding box"""
     nodes_inside = [node for node in G.nodes() if in_bbox(node_pos[node], bbox)]
     return G.__class__(G.subgraph(nodes_inside))
