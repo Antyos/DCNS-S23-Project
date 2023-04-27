@@ -1,14 +1,12 @@
 import heapq
 from collections import deque
-from typing import Any, Callable, Generator, Optional, Union
+from typing import Callable, Generator, Optional, Union
 
 import networkx as nx
 import numpy as np
 from numpy.typing import NDArray
 
-from .graph_utils import Graph
-
-Node = Any
+from .graph_utils import Graph, Node
 
 SearchGenerator = Generator[tuple[dict[Node, None], dict[Node, float]], None, None]
 """Pathfinding search generator.
@@ -91,19 +89,21 @@ def astar_dist_search(
     graph: Graph,
     start: Node,
     end: Node,
-    pos: Optional[dict] = None,
+    node_pos: Optional[dict] = None,
     dist_func: Optional[Callable[[float], float]] = None,
     weight="weight",
 ) -> SearchGenerator:
-    if pos is None:
-        pos = nx.get_node_attributes(graph, "pos")
-        assert pos is not None
+    if node_pos is None:
+        node_pos = nx.get_node_attributes(graph, "pos")
+        assert node_pos is not None
 
     heuristic = {
-        node: float(np.linalg.norm(pos - pos[end])) for node, pos in pos.items()
+        node: float(np.linalg.norm(pos - node_pos[end]))
+        for node, pos in node_pos.items()
     }
     if dist_func is not None:
         heuristic = {node: dist_func(dist) for node, dist in heuristic.items()}
+
     yield from astar_search(graph, start, end, heuristic=heuristic, weight=weight)
 
 
@@ -258,7 +258,7 @@ def astar_dist(
     graph: Graph,
     start: Node,
     end: Node,
-    pos,
+    node_pos,
     dist_func: Optional[Callable[[float], float]] = None,
     weight="weight",
 ):
@@ -275,7 +275,7 @@ def astar_dist(
     try:
         return pathfind(
             astar_dist_search(
-                graph, start, end, pos=pos, dist_func=dist_func, weight=weight
+                graph, start, end, node_pos=node_pos, dist_func=dist_func, weight=weight
             ),
             start,
             end,

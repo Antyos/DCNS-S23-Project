@@ -1,10 +1,11 @@
 import itertools
-from typing import Iterable, TypeVar, Union
+from typing import Any, Iterable, TypeVar, Union
 
 import networkx as nx
 import numpy as np
 from numpy.typing import NDArray
 
+Node = Any
 Graph = Union[nx.Graph, nx.DiGraph]
 
 GGraph = TypeVar("GGraph", bound=Graph)
