@@ -69,7 +69,7 @@ def plot_pathfinding(
     )
     steps.insert(0, steps[0])  # Artificially extend the length of the first frame
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 6))
 
     def update(frame: int):
         if frame >= len(steps):
@@ -98,6 +98,8 @@ def plot_pathfinding(
     if title:
         # fig.suptitle(title)
         ax.set_title(title)
+    fig.tight_layout()
+    fig.subplots_adjust(left=0, right=1, wspace=None)
 
     # Create an animation object
     return FuncAnimation(
