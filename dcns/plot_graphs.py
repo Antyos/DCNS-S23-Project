@@ -62,9 +62,9 @@ def plot_pathfinding(
         style = {}
 
     steps = pathfind_steps(
-        search_func(graph, start, end),
-        start,
-        end,
+        search_generator=search_func(graph, start, end),
+        start=start,
+        end=end,
         sample_steps=sample_steps,
     )
     steps.insert(0, steps[0])  # Artificially extend the length of the first frame
