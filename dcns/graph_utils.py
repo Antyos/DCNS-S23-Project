@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 
 Node = Any
 Graph = Union[nx.Graph, nx.DiGraph]
+PosDict = dict[Node, NDArray[np.floating]]
 
 GGraph = TypeVar("GGraph", bound=Graph)
 """Generic version of `Union[nx.Graph, nx.DiGraph]` for return types"""
@@ -84,7 +85,7 @@ def in_bbox(point, bbox: BBox) -> bool:
     return bbox[0][0] <= point[0] <= bbox[0][1] and bbox[1][0] <= point[1] <= bbox[1][1]
 
 
-def crop_graph(G: Graph, node_pos: dict, bbox: BBox):
+def crop_graph(G: Graph, node_pos: PosDict, bbox: BBox):
     """Get a subgraph based on node positions inside a bounding box"""
     nodes_inside = [node for node in G.nodes() if in_bbox(node_pos[node], bbox)]
     return G.__class__(G.subgraph(nodes_inside))

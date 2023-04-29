@@ -4,14 +4,14 @@ from typing import Callable, Generator, Optional, Union
 
 import networkx as nx
 import numpy as np
-from numpy.typing import NDArray
 
-from .graph_utils import Graph, Node
+from .graph_utils import Graph, Node, PosDict
 
 SearchGenerator = Generator[tuple[dict[Node, None], dict[Node, float]], None, None]
 """Pathfinding search generator.
 
 Yields:
+-------
 predecessor: dict
 distance: dict
 """
@@ -89,7 +89,7 @@ def astar_dist_search(
     graph: Graph,
     start: Node,
     end: Node,
-    node_pos: Optional[dict] = None,
+    node_pos: Optional[PosDict] = None,
     dist_func: Optional[Callable[[float], float]] = None,
     weight="weight",
 ) -> SearchGenerator:
@@ -258,7 +258,7 @@ def astar_dist(
     graph: Graph,
     start: Node,
     end: Node,
-    node_pos,
+    node_pos: PosDict,
     dist_func: Optional[Callable[[float], float]] = None,
     weight="weight",
 ):
