@@ -1,27 +1,32 @@
 # %%
 import itertools
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
-from typing import Iterable, Union
 
 import more_itertools
 import networkx as nx
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 try:
+    from .close_edges import with_close_edges
     from .graph_utils import node_attr_ndarray_to_list, remove_edge_attrs
+    from .plot_graphs import plot_graph
 except ImportError:
+    from close_edges import with_close_edges  # type: ignore
     from graph_utils import node_attr_ndarray_to_list, remove_edge_attrs  # type: ignore
+    from plot_graphs import plot_graph  # type: ignore
 
-DATA_DIR = Path(__file__).parent / "../data/gtfs-dart-2023-02-28"
+DATA_DIR = Path(__file__).parent / "../data/"
+DART_DATA_DIR = DATA_DIR / "gtfs-dart-2023-02-28"
 
 # %%
-routes = pd.read_csv(DATA_DIR / "routes.txt")
-trips = pd.read_csv(DATA_DIR / "trips.txt")
-stop_times = pd.read_csv(DATA_DIR / "stop_times.txt")
-stops = pd.read_csv(DATA_DIR / "stops.txt")
+routes = pd.read_csv(DART_DATA_DIR / "routes.txt")
+trips = pd.read_csv(DART_DATA_DIR / "trips.txt")
+stop_times = pd.read_csv(DART_DATA_DIR / "stop_times.txt")
+stops = pd.read_csv(DART_DATA_DIR / "stops.txt")
 
 
 # Convert stop times to actual times
@@ -68,7 +73,7 @@ def graph_common_data_fields(data_dir: Path, draw=True):
     return G
 
 
-def make_graph(flag):
+def make_graph():
     # Flow of data lookups to generate routes
     # routes --route_id-> trips --trip_id-> stop_times --stop_id-> stops
 
@@ -93,7 +98,7 @@ def make_graph(flag):
 
     nx.set_node_attributes(G, get_stop_pos(stops), "pos")
     nx.set_node_attributes(G, stops.set_index("stop_id").stop_name.to_dict(), "name")
-    add_edge_attributes(G,flag)
+    add_edge_attributes(G)
 
     return G
 
@@ -113,31 +118,19 @@ def get_stop_pos(stops) -> dict:
     )
 
 
-def add_edge_attributes(G,flag):
+def add_edge_attributes(G):
     """Add number of trips & avg time time to edges"""
     num_trips = {
         trip: len(times)
         for trip, times in nx.get_edge_attributes(G, "trip_times").items()
     }
-    avg_trip_times = {
+    nx.set_edge_attributes(G, num_trips, "num_trips")
+
+    avg_trip_time = {
         trip: round(sum(times) / len(times), 2)
         for trip, times in nx.get_edge_attributes(G, "trip_times").items()
     }
-    num_trips_over5000 = {
-        trip: num_trips[trip]/5000
-        for trip, times in nx.get_edge_attributes(G, "trip_times").items()
-    }
-    if flag == 1:
-        nx.set_edge_attributes(G, num_trips, "num_trips")
-        nx.set_edge_attributes(G, avg_trip_times, "weight")
-    elif flag == 2:
-        nx.set_edge_attributes(G, num_trips, "weight")
-        nx.set_edge_attributes(G, avg_trip_times, "avg_trip_times")
-    elif flag == 3:
-        nx.set_edge_attributes(G, num_trips_over5000, "weight")
-        nx.set_edge_attributes(G, avg_trip_times, "avg_trip_times")
-    else:
-        print("Put either 1 2 or 3 in the second argument")
+    nx.set_edge_attributes(G, avg_trip_time, "avg_trip_time")
 
 
 def save_gml(G, output_path):
@@ -151,12 +144,21 @@ def save_gml(G, output_path):
 
 # %%
 
-G_time = make_graph(1)
-G_freq = make_graph(2)
-G_freq_over5000 = make_graph(3)
-stop_pos = get_stop_pos(stops)
-nx.draw(G_time, stop_pos, node_size=5, width=0.5)
+# Full Graph
+G = make_graph()
 
-save_gml(G_time, "../data/dart_stops_time.gml")
-save_gml(G_freq, "../data/dart_stops_freq.gml")
-save_gml(G_freq_over5000, "../data/dart_stops_freq_over5000.gml")
+# Largest component
+G2 = G.__class__(G.subgraph(max(nx.strongly_connected_components(G), key=len)))
+
+# With close edges
+close_edge_threshold = 0.00085
+G3 = with_close_edges(G2, close_edge_threshold, avg_trip_time=20, num_trips=100_000)
+
+save_gml(G, DATA_DIR / "dartstops_full.gml")
+save_gml(G2, DATA_DIR / "dartstops_largest_component.gml")
+save_gml(G2, DATA_DIR / "dartstops_largest_component_with_close_edges.gml")
+
+# %% Plot
+stop_pos = get_stop_pos(stops)
+fig, ax = plt.subplots()
+plot_graph(G, stop_pos, ax)
