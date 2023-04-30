@@ -15,6 +15,15 @@ network as well as investigating pathfinding algorithms.
 > Data obtained from: www.dart.org/transitdata/latest/google_transit.zip
 > See also: DART GTFS data on [MobilityData/mobility-database-catalogs](https://github.com/MobilityData/mobility-database-catalogs/blob/c74327f4a4955ee0189f261478fb04807c067334/catalogs/sources/gtfs/schedule/us-texas-dallas-area-rapid-transit-dart-gtfs-152.json#L4)
 
+## Running the Code
+
+1. Install Python 3.9 and [Poetry](https://python-poetry.org/docs/#installation)
+2. Run `poetry install` in the command line. Note: if Python 3.9 is not your
+   default Python intrepreter, you may need to first run `poetry env use
+   path/to/python3.9`
+3. Run `dcns/parse_data.py` to create GML files from the GTFS data or look at
+   `dart_graph.ipynb` for the analysis.
+
 ---
 
 ## What is our network?

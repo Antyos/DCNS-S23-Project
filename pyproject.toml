@@ -2,7 +2,10 @@
 name = "dcns-project"
 version = "0.1.0"
 description = ""
-authors = ["Andrew Glick <17516195+Antyos@users.noreply.github.com>"]
+authors = [
+    "Andrew Glick <17516195+Antyos@users.noreply.github.com>",
+    "David Simpson <127239079+dsim49@users.noreply.github.com>",
+]
 
 [tool.poetry.dependencies]
 python = "~3.9"
